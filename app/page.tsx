@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { SignInButton } from "@clerk/nextjs";
+import { ExternalLink, Trash2, Link as LinkIcon } from "lucide-react";
 import prisma from "../lib/prisma";
 import { claimUsername, createLink, deleteLink } from "./actions";
 
@@ -8,7 +9,6 @@ import CopyButton from "./components/copy-button";
 export default async function Home() {
   const user = await currentUser();
 
-  // State 1: Not logged in
   // State 1: Not logged in
   if (!user) {
     return (
@@ -122,40 +122,46 @@ export default async function Home() {
           {/* Links List */}
           <div className="card">
             <h2 className="text-2xl font-bold mb-6 text-black">Your Links</h2>
-            {dbUser.links.length === 0 ?
-              <p className="text-[#6B7280]">
-                No links yet. Add your first link above!
-              </p>
-            : <div className="flex flex-col gap-4">
+            {dbUser.links.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 text-[#6B7280]">
+                <LinkIcon size={24} className="opacity-50" />
+                <p>No links yet. Add your first link above!</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
                 {dbUser.links.map((link) => (
                   <div
                     key={link.id}
                     className="flex items-center justify-between bg-white border border-[#E5E5E5] rounded-xl p-4"
                   >
-                    <div className="flex flex-col gap-1 flex-1">
-                      <h3 className="font-semibold text-black">{link.title}</h3>
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-[#6B7280] hover:text-black transition-colors"
-                      >
-                        {link.url}
-                      </a>
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="flex flex-col gap-1 flex-1">
+                        <h3 className="font-semibold text-black">{link.title}</h3>
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-[#6B7280] hover:text-black transition-colors flex items-center gap-1"
+                        >
+                          {link.url}
+                          <ExternalLink size={14} />
+                        </a>
+                      </div>
                     </div>
                     <form action={deleteLink}>
                       <input type="hidden" name="linkId" value={link.id} />
                       <button
                         type="submit"
-                        className="px-6 py-2 rounded-full border border-[#E5E5E5] bg-white text-black font-medium hover:bg-[#F7F7F7] transition-colors"
+                        className="px-3 py-2 rounded-full border border-[#E5E5E5] bg-white text-black font-medium hover:bg-[#F7F7F7] transition-colors flex items-center justify-center"
+                        aria-label="Delete link"
                       >
-                        Delete
+                        <Trash2 size={18} />
                       </button>
                     </form>
                   </div>
                 ))}
               </div>
-            }
+            )}
           </div>
 
           {/* Profile Info */}
