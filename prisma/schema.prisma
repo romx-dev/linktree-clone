@@ -11,6 +11,7 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
+  name String?
   username  String   @unique // Important for the public profile URL
   clerkId   String   @unique // Links to Clerk Auth
   links     Link[]
