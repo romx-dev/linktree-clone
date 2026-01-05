@@ -9,10 +9,16 @@ export default async function Home() {
   const user = await currentUser();
 
   // State 1: Not logged in
+  // State 1: Not logged in
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <main className="flex w-full max-w-2xl flex-col items-center justify-center px-6 py-20">
+      <div className="flex min-h-screen items-center justify-center relative">
+        {/* Radial glow */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-[800px] h-[800px] bg-white rounded-full blur-3xl opacity-50"></div>
+        </div>
+
+        <main className="relative z-10 flex w-full max-w-2xl flex-col items-center justify-center px-6 py-20">
           <div className="flex flex-col items-center gap-8 text-center w-full">
             <h1 className="text-5xl font-bold leading-tight text-black">
               Welcome to Linktree
@@ -74,10 +80,10 @@ export default async function Home() {
 
   // State 3: Has DB profile - Show dashboard
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen">
       <main className="flex w-full max-w-4xl flex-col px-6 py-12 mx-auto">
         <div className="flex flex-col gap-8 w-full">
-          <div>
+          <div className="card">
             <h1 className="text-5xl font-bold leading-tight text-black mb-3">
               Dashboard
             </h1>
@@ -87,7 +93,7 @@ export default async function Home() {
           </div>
 
           {/* Add Link Form */}
-          <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-xl p-8">
+          <div className="card">
             <h2 className="text-2xl font-bold mb-6 text-black">Add Link</h2>
             <form action={createLink} className="flex flex-col gap-4">
               <input
@@ -114,7 +120,7 @@ export default async function Home() {
           </div>
 
           {/* Links List */}
-          <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-xl p-8">
+          <div className="card">
             <h2 className="text-2xl font-bold mb-6 text-black">Your Links</h2>
             {dbUser.links.length === 0 ?
               <p className="text-[#6B7280]">
@@ -153,7 +159,7 @@ export default async function Home() {
           </div>
 
           {/* Profile Info */}
-          <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-xl p-8">
+          <div className="card">
             <h2 className="text-2xl font-bold mb-6 text-black">Your Profile</h2>
             <div className="flex flex-col gap-4 text-[#6B7280]">
               <div>
