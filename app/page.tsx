@@ -1,8 +1,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { SignInButton } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 import prisma from "../lib/prisma";
-import { claimUsername } from "./actions";
+import { claimUsername, createLink, deleteLink } from "./actions";
+
+import CopyButton from "./components/copy-button";
 
 export default async function Home() {
   const user = await currentUser();
@@ -33,6 +34,7 @@ export default async function Home() {
   // Check if user exists in database
   const dbUser = await prisma.user.findUnique({
     where: { clerkId: user.id },
+    include: { links: true },
   });
 
   // State 2: Logged in but no DB profile
@@ -83,11 +85,76 @@ export default async function Home() {
               Welcome, @{dbUser.username}!
             </p>
           </div>
-          
+
+          {/* Add Link Form */}
           <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-xl p-8">
-            <h2 className="text-2xl font-bold mb-6 text-black">
-              Your Profile
-            </h2>
+            <h2 className="text-2xl font-bold mb-6 text-black">Add Link</h2>
+            <form action={createLink} className="flex flex-col gap-4">
+              <input
+                type="text"
+                name="title"
+                placeholder="Link title"
+                required
+                className="w-full px-6 py-4 rounded-xl border border-[#E5E5E5] bg-white text-black placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FFDD00] focus:border-transparent"
+              />
+              <input
+                type="url"
+                name="url"
+                placeholder="https://example.com"
+                required
+                className="w-full px-6 py-4 rounded-xl border border-[#E5E5E5] bg-white text-black placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FFDD00] focus:border-transparent"
+              />
+              <button
+                type="submit"
+                className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity"
+              >
+                Add Link
+              </button>
+            </form>
+          </div>
+
+          {/* Links List */}
+          <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-xl p-8">
+            <h2 className="text-2xl font-bold mb-6 text-black">Your Links</h2>
+            {dbUser.links.length === 0 ?
+              <p className="text-[#6B7280]">
+                No links yet. Add your first link above!
+              </p>
+            : <div className="flex flex-col gap-4">
+                {dbUser.links.map((link) => (
+                  <div
+                    key={link.id}
+                    className="flex items-center justify-between bg-white border border-[#E5E5E5] rounded-xl p-4"
+                  >
+                    <div className="flex flex-col gap-1 flex-1">
+                      <h3 className="font-semibold text-black">{link.title}</h3>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-[#6B7280] hover:text-black transition-colors"
+                      >
+                        {link.url}
+                      </a>
+                    </div>
+                    <form action={deleteLink}>
+                      <input type="hidden" name="linkId" value={link.id} />
+                      <button
+                        type="submit"
+                        className="px-6 py-2 rounded-full border border-[#E5E5E5] bg-white text-black font-medium hover:bg-[#F7F7F7] transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                ))}
+              </div>
+            }
+          </div>
+
+          {/* Profile Info */}
+          <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-xl p-8">
+            <h2 className="text-2xl font-bold mb-6 text-black">Your Profile</h2>
             <div className="flex flex-col gap-4 text-[#6B7280]">
               <div>
                 <span className="font-semibold text-black">Username:</span>{" "}
@@ -99,7 +166,7 @@ export default async function Home() {
               </div>
               <div>
                 <span className="font-semibold text-black">Links:</span>{" "}
-                {dbUser.links?.length || 0}
+                {dbUser.links.length}
               </div>
             </div>
           </div>
