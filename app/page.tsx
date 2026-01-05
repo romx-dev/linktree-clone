@@ -10,17 +10,17 @@ export default async function Home() {
   // State 1: Not logged in
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-        <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-center py-32 px-16 bg-white dark:bg-black">
-          <div className="flex flex-col items-center gap-6 text-center">
-            <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <main className="flex w-full max-w-2xl flex-col items-center justify-center px-6 py-20">
+          <div className="flex flex-col items-center gap-8 text-center w-full">
+            <h1 className="text-5xl font-bold leading-tight text-black">
               Welcome to Linktree
             </h1>
-            <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+            <p className="text-lg text-[#6B7280] max-w-md">
               Sign in to create your personalized link tree
             </p>
             <SignInButton mode="modal">
-              <button className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]">
+              <button className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity">
                 Sign In
               </button>
             </SignInButton>
@@ -38,13 +38,13 @@ export default async function Home() {
   // State 2: Logged in but no DB profile
   if (!dbUser) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-        <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-center py-32 px-16 bg-white dark:bg-black">
-          <div className="flex flex-col items-center gap-6 text-center w-full max-w-md">
-            <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <main className="flex w-full max-w-2xl flex-col items-center justify-center px-6 py-20">
+          <div className="flex flex-col items-center gap-8 text-center w-full max-w-md">
+            <h1 className="text-5xl font-bold leading-tight text-black">
               Claim Your Username
             </h1>
-            <p className="text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+            <p className="text-lg text-[#6B7280]">
               Choose a unique username to get started
             </p>
             <form action={claimUsername} className="w-full flex flex-col gap-4">
@@ -55,11 +55,11 @@ export default async function Home() {
                 required
                 minLength={3}
                 pattern="[a-zA-Z0-9_]+"
-                className="w-full h-12 px-4 rounded-full border border-solid border-black/[.08] dark:border-white/[.145] bg-white dark:bg-black text-black dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-[#6c47ff]"
+                className="w-full px-6 py-4 rounded-xl border border-[#E5E5E5] bg-white text-black placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FFDD00] focus:border-transparent"
               />
               <button
                 type="submit"
-                className="flex h-12 w-full items-center justify-center rounded-full bg-[#6c47ff] text-white font-medium transition-colors hover:bg-[#5a3ae6]"
+                className="w-full px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity"
               >
                 Claim Username
               </button>
@@ -72,30 +72,35 @@ export default async function Home() {
 
   // State 3: Has DB profile - Show dashboard
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-start py-32 px-16 bg-white dark:bg-black">
-        <div className="flex flex-col gap-6 w-full">
-          <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Dashboard
-          </h1>
-          <p className="text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Welcome, @{dbUser.username}!
-          </p>
-          <div className="mt-8 p-6 border border-solid border-black/[.08] dark:border-white/[.145] rounded-lg">
-            <h2 className="text-xl font-semibold mb-4 text-black dark:text-zinc-50">
+    <div className="flex min-h-screen bg-white">
+      <main className="flex w-full max-w-4xl flex-col px-6 py-12 mx-auto">
+        <div className="flex flex-col gap-8 w-full">
+          <div>
+            <h1 className="text-5xl font-bold leading-tight text-black mb-3">
+              Dashboard
+            </h1>
+            <p className="text-lg text-[#6B7280]">
+              Welcome, @{dbUser.username}!
+            </p>
+          </div>
+          
+          <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-xl p-8">
+            <h2 className="text-2xl font-bold mb-6 text-black">
               Your Profile
             </h2>
-            <div className="flex flex-col gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-              <p>
-                <span className="font-medium">Username:</span> {dbUser.username}
-              </p>
-              <p>
-                <span className="font-medium">Email:</span> {dbUser.email}
-              </p>
-              <p>
-                <span className="font-medium">Links:</span>{" "}
+            <div className="flex flex-col gap-4 text-[#6B7280]">
+              <div>
+                <span className="font-semibold text-black">Username:</span>{" "}
+                {dbUser.username}
+              </div>
+              <div>
+                <span className="font-semibold text-black">Email:</span>{" "}
+                {dbUser.email}
+              </div>
+              <div>
+                <span className="font-semibold text-black">Links:</span>{" "}
                 {dbUser.links?.length || 0}
-              </p>
+              </div>
             </div>
           </div>
         </div>
