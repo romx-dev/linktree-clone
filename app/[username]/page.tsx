@@ -40,7 +40,7 @@ export default async function PublicProfile({ params }: PageProps) {
           <div className="flex flex-col items-center gap-8 text-center w-full">
             {/* Avatar */}
             {clerkUser.imageUrl ?
-              <img
+              <Image
                 src={clerkUser.imageUrl}
                 alt={user.username}
                 className="w-24 h-24 rounded-full object-cover"
@@ -88,7 +88,7 @@ export default async function PublicProfile({ params }: PageProps) {
             href="/"
             className="text-[#6B7280] hover:text-black transition-colors"
           >
-            Create your own →
+            Crie seu próprio Linktree →
           </Link>
         </div>
       </main>

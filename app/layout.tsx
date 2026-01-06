@@ -1,4 +1,5 @@
 import { type Metadata } from "next";
+import { Button } from "@/components/ui/button";
 import {
   ClerkProvider,
   SignInButton,
@@ -9,6 +10,7 @@ import {
 } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +24,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Linktree",
-  description: "Create your personalized link tree",
+  description: "Crie seu próprio Linktree",
 };
 
 export default function RootLayout({
@@ -40,14 +42,24 @@ export default function RootLayout({
             <SignedOut>
               <div className="flex gap-3">
                 <SignInButton mode="modal">
-                  <button className="px-6 py-2 rounded-full border border-[#E5E5E5] bg-white text-black font-medium hover:bg-[#F7F7F7] transition-colors">
-                    Sign In
-                  </button>
+                  <Button
+                    variant="default"
+                    className={cn(
+                      "px-6 py-2 rounded-full border border-[#E5E5E5] bg-white text-black font-medium hover:bg-[#F7F7F7] transition-colors cursor-pointer"
+                    )}
+                  >
+                    Login
+                  </Button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity">
-                    Sign Up
-                  </button>
+                  <Button
+                    variant="default"
+                    className={cn(
+                      "px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:bg-transparent transition-opacity cursor-pointer"
+                    )}
+                  >
+                    Criar Conta
+                  </Button>
                 </SignUpButton>
               </div>
             </SignedOut>

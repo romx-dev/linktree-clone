@@ -8,13 +8,14 @@ export default function NotFound() {
           <div className="flex flex-col items-center gap-8 text-center w-full">
             <h1 className="text-5xl font-bold leading-tight text-black">404</h1>
             <p className="text-lg text-[#6B7280] max-w-md">
-              Page not found. The page you're looking for doesn't exist.
+              Página não encontrada. A página que você está procurando não
+              existe.
             </p>
             <Link
               href="/"
               className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity"
             >
-              Go home
+              Voltar
             </Link>
           </div>
         </div>

@@ -5,6 +5,7 @@ import prisma from "../lib/prisma";
 import { claimUsername, createLink, deleteLink } from "./actions";
 
 import CopyButton from "./components/copy-button";
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   const user = await currentUser();
@@ -12,7 +13,7 @@ export default async function Home() {
   // State 1: Not logged in
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center relative">
+      <div className="flex h-screen items-center justify-center relative overflow-hidden">
         {/* Radial glow */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-[800px] h-[800px] bg-white rounded-full blur-3xl opacity-50"></div>
@@ -21,15 +22,18 @@ export default async function Home() {
         <main className="relative z-10 flex w-full max-w-2xl flex-col items-center justify-center px-6 py-20">
           <div className="flex flex-col items-center gap-8 text-center w-full">
             <h1 className="text-5xl font-bold leading-tight text-black">
-              Welcome to Linktree
+              Bem-vindo ao Linktree
             </h1>
             <p className="text-lg text-[#6B7280] max-w-md">
-              Sign in to create your personalized link tree
+              Faça login para criar sua árvore de links personalizada.
             </p>
             <SignInButton mode="modal">
-              <button className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity">
-                Sign In
-              </button>
+              <Button
+                variant="default"
+                className="rounded-full bg-[#FFDD00] text-black font-semibold  transition-opacity hover:bg-[#f3d985] cursor-pointer"
+              >
+                Fazer Login
+              </Button>
             </SignInButton>
           </div>
         </main>
@@ -88,18 +92,20 @@ export default async function Home() {
               Dashboard
             </h1>
             <p className="text-lg text-[#6B7280]">
-              Welcome, @{dbUser.username}!
+              Bem-vindo, @{dbUser.username}!
             </p>
           </div>
 
           {/* Add Link Form */}
           <div className="card">
-            <h2 className="text-2xl font-bold mb-6 text-black">Add Link</h2>
+            <h2 className="text-2xl font-bold mb-6 text-black">
+              Adicionar Link
+            </h2>
             <form action={createLink} className="flex flex-col gap-4">
               <input
                 type="text"
                 name="title"
-                placeholder="Link title"
+                placeholder="Link do Titulo"
                 required
                 className="w-full px-6 py-4 rounded-xl border border-[#E5E5E5] bg-white text-black placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FFDD00] focus:border-transparent"
               />
@@ -114,21 +120,20 @@ export default async function Home() {
                 type="submit"
                 className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity"
               >
-                Add Link
+                Adicionar Link
               </button>
             </form>
           </div>
 
           {/* Links List */}
           <div className="card">
-            <h2 className="text-2xl font-bold mb-6 text-black">Your Links</h2>
-            {dbUser.links.length === 0 ? (
+            <h2 className="text-2xl font-bold mb-6 text-black">Seus Links</h2>
+            {dbUser.links.length === 0 ?
               <div className="flex flex-col items-center gap-3 text-[#6B7280]">
                 <LinkIcon size={24} className="opacity-50" />
-                <p>No links yet. Add your first link above!</p>
+                <p>Ainda não há links. Adicione seu primeiro link acima!</p>
               </div>
-            ) : (
-              <div className="flex flex-col gap-4">
+            : <div className="flex flex-col gap-4">
                 {dbUser.links.map((link) => (
                   <div
                     key={link.id}
@@ -136,7 +141,9 @@ export default async function Home() {
                   >
                     <div className="flex items-center gap-3 flex-1">
                       <div className="flex flex-col gap-1 flex-1">
-                        <h3 className="font-semibold text-black">{link.title}</h3>
+                        <h3 className="font-semibold text-black">
+                          {link.title}
+                        </h3>
                         <a
                           href={link.url}
                           target="_blank"
@@ -161,15 +168,15 @@ export default async function Home() {
                   </div>
                 ))}
               </div>
-            )}
+            }
           </div>
 
           {/* Profile Info */}
           <div className="card">
-            <h2 className="text-2xl font-bold mb-6 text-black">Your Profile</h2>
+            <h2 className="text-2xl font-bold mb-6 text-black">Seu Perfil</h2>
             <div className="flex flex-col gap-4 text-[#6B7280]">
               <div>
-                <span className="font-semibold text-black">Username:</span>{" "}
+                <span className="font-semibold text-black">Nickname:</span>{" "}
                 {dbUser.username}
               </div>
               <div>
