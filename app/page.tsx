@@ -61,16 +61,6 @@ export default async function Home() {
     include: { links: true },
   });
 
-  // State 3: Has DB profile - Show dashboard
-  const planLimits = getPlanLimits(dbUser?.plan);
-  const limitCheck = canCreateLink(
-    dbUser?.plan,
-    dbUser?.links.length,
-    dbUser?.planExpiresAt
-  );
-  const planExpired =
-    dbUser?.planExpiresAt && dbUser?.planExpiresAt < new Date();
-
   // State 2: Logged in but no DB profile
   if (!dbUser) {
     return (
@@ -107,6 +97,15 @@ export default async function Home() {
   }
 
   // State 3: Has DB profile - Show dashboard
+  // Calculate plan limits and checks (dbUser is guaranteed to exist here)
+  const planLimits = getPlanLimits(dbUser.plan);
+  const limitCheck = canCreateLink(
+    dbUser.plan,
+    dbUser.links.length,
+    dbUser.planExpiresAt
+  );
+  const planExpired = dbUser.planExpiresAt && dbUser.planExpiresAt < new Date();
+
   return (
     <div className="flex min-h-screen">
       <main className="flex w-full max-w-4xl flex-col px-6 py-12 mx-auto">
@@ -223,7 +222,7 @@ export default async function Home() {
               <h2 className="text-2xl font-bold text-black">Adicionar Link</h2>
               <div className="text-sm text-[#6B7280]">
                 {dbUser.links.length} /{" "}
-                {planLimits.maxLinks === Infinity ? "∞" : planLimits.maxLinks}{" "}
+                {planLimits?.maxLinks === Infinity ? "∞" : planLimits?.maxLinks}{" "}
                 links
               </div>
             </div>
