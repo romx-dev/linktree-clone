@@ -7,7 +7,11 @@ datasource db {
   provider = "postgresql"
 }
 
-// Example User model for testing
+enum Plan {
+  FREE
+  PRO
+  PREMIUM
+}
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -15,6 +19,8 @@ model User {
   username  String   @unique // Important for the public profile URL
   clerkId   String   @unique // Links to Clerk Auth
   pixKey    String?  // Chave PIX para receber doações
+  plan      Plan     @default(FREE) // FREE, PRO, PREMIUM
+  planExpiresAt DateTime?
   links     Link[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

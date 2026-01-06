@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import prisma from "../lib/prisma";
+import { canCreateLink } from "../lib/plan-limits";
 
 export async function claimUsername(formData: FormData) {
   const user = await currentUser();
@@ -56,10 +57,22 @@ export async function createLink(formData: FormData) {
   // Get user from database
   const dbUser = await prisma.user.findUnique({
     where: { clerkId: user.id },
+    include: { links: true },
   });
 
   if (!dbUser) {
     throw new Error("User profile not found");
+  }
+
+  // Check plan limits
+  const limitCheck = canCreateLink(
+    dbUser.plan,
+    dbUser.links.length,
+    dbUser.planExpiresAt
+  );
+
+  if (!limitCheck.allowed) {
+    throw new Error(limitCheck.reason || "Limite de links atingido");
   }
 
   const title = formData.get("title") as string;
@@ -80,6 +93,56 @@ export async function createLink(formData: FormData) {
   });
 
   revalidatePath("/");
+}
+
+export async function upgradePlan(formData: FormData) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new Error("Not authenticated");
+  }
+
+  const dbUser = await prisma.user.findUnique({
+    where: { clerkId: user.id },
+  });
+
+  if (!dbUser) {
+    throw new Error("User profile not found");
+  }
+
+  const plan = formData.get("plan") as "PRO" | "PREMIUM";
+  const billing = formData.get("billing") as "monthly" | "yearly";
+
+  if (!plan || !billing) {
+    throw new Error("Plan and billing are required");
+  }
+
+  // Calculate expiration date
+  const now = new Date();
+  const expiresAt = new Date(now);
+  if (billing === "monthly") {
+    expiresAt.setMonth(expiresAt.getMonth() + 1);
+  } else {
+    expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+  }
+
+  // In a real implementation, you would:
+  // 1. Create payment intent with Mercado Pago/Stripe
+  // 2. Redirect to payment page
+  // 3. Handle webhook to update plan after payment
+  
+  // For now, we'll create a mock upgrade (remove in production!)
+  // TODO: Replace with actual payment integration
+  await prisma.user.update({
+    where: { id: dbUser.id },
+    data: {
+      plan: plan,
+      planExpiresAt: expiresAt,
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/planos");
 }
 
 export async function deleteLink(formData: FormData) {

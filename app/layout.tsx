@@ -1,4 +1,5 @@
 import { type Metadata } from "next";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   ClerkProvider,
@@ -55,7 +56,7 @@ export default function RootLayout({
                   <Button
                     variant="default"
                     className={cn(
-                      "px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:bg-transparent transition-opacity cursor-pointer"
+                      "px-8 py-4 rounded-full bg-[#ffdd00] text-gray-900 font-semibold hover:bg-transparent transition-opacity cursor-pointer"
                     )}
                   >
                     Criar Conta
@@ -64,7 +65,15 @@ export default function RootLayout({
               </div>
             </SignedOut>
             <SignedIn>
-              <UserButton />
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/planos"
+                  className="text-sm font-semibold text-gray-900 transition-colors px-3 py-1.5 rounded-lg hover:bg-yellow-50"
+                >
+                  Planos
+                </Link>
+                <UserButton />
+              </div>
             </SignedIn>
           </header>
           {children}

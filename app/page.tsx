@@ -1,6 +1,14 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { SignInButton } from "@clerk/nextjs";
-import { ExternalLink, Trash2, Link as LinkIcon, Coffee } from "lucide-react";
+import {
+  ExternalLink,
+  Trash2,
+  Link as LinkIcon,
+  Coffee,
+  Crown,
+  Zap,
+  AlertCircle,
+} from "lucide-react";
 import prisma from "../lib/prisma";
 import {
   claimUsername,
@@ -9,9 +17,9 @@ import {
   updatePixKey,
   removePixKey,
 } from "./actions";
-
-import CopyButton from "./components/copy-button";
+import { getPlanLimits, canCreateLink } from "../lib/plan-limits";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function Home() {
   const user = await currentUser();
@@ -52,6 +60,16 @@ export default async function Home() {
     where: { clerkId: user.id },
     include: { links: true },
   });
+
+  // State 3: Has DB profile - Show dashboard
+  const planLimits = getPlanLimits(dbUser?.plan);
+  const limitCheck = canCreateLink(
+    dbUser?.plan,
+    dbUser?.links.length,
+    dbUser?.planExpiresAt
+  );
+  const planExpired =
+    dbUser?.planExpiresAt && dbUser?.planExpiresAt < new Date();
 
   // State 2: Logged in but no DB profile
   if (!dbUser) {
@@ -106,7 +124,40 @@ export default async function Home() {
               Bem-vindo, @{dbUser.username}!
             </p>
           </div>
-
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-2">
+              {dbUser.plan === "FREE" ?
+                <span className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
+                  Plano Grátis
+                </span>
+              : dbUser.plan === "PRO" ?
+                <span className="px-4 py-2 rounded-full bg-[#FFDD00] text-black font-semibold text-sm flex items-center gap-1">
+                  <Zap size={16} />
+                  Pro
+                </span>
+              : <span className="px-4 py-2 rounded-full bg-[#FFDD00] text-black font-semibold text-sm flex items-center gap-1">
+                  <Crown size={16} />
+                  Premium
+                </span>
+              }
+            </div>
+            {planExpired && (
+              <span className="text-xs text-red-600 font-semibold">
+                Plano Expirado
+              </span>
+            )}
+            {dbUser.plan !== "FREE" && !planExpired && (
+              <span className="text-xs text-[#6B7280]">
+                Válido até {dbUser.planExpiresAt?.toLocaleDateString("pt-BR")}
+              </span>
+            )}
+            <Link
+              href="/planos"
+              className="text-sm hover:underline font-semibold"
+            >
+              {dbUser.plan === "FREE" ? "Fazer Upgrade" : "Gerenciar Plano"}
+            </Link>
+          </div>
           {/* PIX Configuration */}
           <div className="card">
             <h2 className="text-2xl font-bold mb-6 text-black flex items-center gap-2">
@@ -168,29 +219,63 @@ export default async function Home() {
 
           {/* Add Link Form */}
           <div className="card">
-            <h2 className="text-2xl font-bold mb-6 text-black">
-              Adicionar Link
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-black">Adicionar Link</h2>
+              <div className="text-sm text-[#6B7280]">
+                {dbUser.links.length} /{" "}
+                {planLimits.maxLinks === Infinity ? "∞" : planLimits.maxLinks}{" "}
+                links
+              </div>
+            </div>
+
+            {!limitCheck.allowed && (
+              <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-start gap-3">
+                <AlertCircle
+                  size={20}
+                  className="text-yellow-600 flex-shrink-0 mt-0.5"
+                />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-yellow-900 mb-1">
+                    Limite de links atingido
+                  </p>
+                  <p className="text-sm text-yellow-800 mb-2">
+                    {limitCheck.reason}
+                  </p>
+                  <Link
+                    href="/planos"
+                    className="text-sm font-semibold text-yellow-900 hover:underline"
+                  >
+                    Fazer upgrade →
+                  </Link>
+                </div>
+              </div>
+            )}
+
             <form action={createLink} className="flex flex-col gap-4">
               <input
                 type="text"
                 name="title"
                 placeholder="Link do Titulo"
                 required
-                className="w-full px-6 py-4 rounded-xl border border-[#E5E5E5] bg-white text-black placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FFDD00] focus:border-transparent"
+                disabled={!limitCheck.allowed}
+                className="w-full px-6 py-4 rounded-xl border border-[#E5E5E5] bg-white text-black placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FFDD00] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <input
                 type="url"
                 name="url"
                 placeholder="https://example.com"
                 required
-                className="w-full px-6 py-4 rounded-xl border border-[#E5E5E5] bg-white text-black placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FFDD00] focus:border-transparent"
+                disabled={!limitCheck.allowed}
+                className="w-full px-6 py-4 rounded-xl border border-[#E5E5E5] bg-white text-black placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FFDD00] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
-                className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity"
+                disabled={!limitCheck.allowed}
+                className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Adicionar Link
+                {limitCheck.allowed ?
+                  "Adicionar Link"
+                : "Limite Atingido - Faça Upgrade"}
               </button>
             </form>
           </div>
