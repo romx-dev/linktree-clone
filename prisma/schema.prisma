@@ -14,6 +14,7 @@ model User {
   name String?
   username  String   @unique // Important for the public profile URL
   clerkId   String   @unique // Links to Clerk Auth
+  pixKey    String?  // Chave PIX para receber doações
   links     Link[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

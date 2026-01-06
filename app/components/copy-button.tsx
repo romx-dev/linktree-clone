@@ -27,7 +27,7 @@ export default function CopyButton({ username }: CopyButtonProps) {
       onClick={handleCopy}
       className="px-6 py-2 rounded-full border border-[#E5E5E5] bg-white text-black font-medium hover:bg-[#F7F7F7] transition-colors"
     >
-      {copied ? "Copied!" : "Copy link"}
+      {copied ? "Copiado!" : "Copiar Link"}
     </button>
   );
 }

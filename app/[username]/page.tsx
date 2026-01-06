@@ -4,7 +4,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "../../lib/prisma";
 import CopyButton from "../components/copy-button";
 import Image from "next/image";
-
+import PixButton from "../components/pix-button";
 interface PageProps {
   params: Promise<{ username: string }>;
 }
@@ -25,13 +25,10 @@ export default async function PublicProfile({ params }: PageProps) {
 
   // Fetch Clerk user to get profile image
   const client = clerkClient();
-  const clerkUser = (await client).users.getUser(user.clerkId);
+  const clerkUser = await (await client).users.getUser(user.clerkId);
 
   // Get first letter for avatar (prefer name, fallback to username)
   const avatarLetter = (user.username || user.username)[0].toUpperCase();
-
-  // Build the profile URL
-  const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/${user.username}`;
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -41,6 +38,8 @@ export default async function PublicProfile({ params }: PageProps) {
             {/* Avatar */}
             {clerkUser.imageUrl ?
               <Image
+                width="200"
+                height="200"
                 src={clerkUser.imageUrl}
                 alt={user.username}
                 className="w-24 h-24 rounded-full object-cover"
@@ -56,9 +55,6 @@ export default async function PublicProfile({ params }: PageProps) {
             <h1 className="text-5xl font-bold leading-tight text-black">
               @{user.username}
             </h1>
-
-            {/* Name (if available) */}
-            {user.name && <p className="text-xl text-[#6B7280]">{user.name}</p>}
 
             {/* Copy Link Button */}
             <CopyButton username={user.username} />
@@ -78,7 +74,11 @@ export default async function PublicProfile({ params }: PageProps) {
                   </a>
                 ))}
               </div>
-            : <p className="text-[#6B7280] mt-4">No links yet.</p>}
+            : <p className="text-[#6B7280] mt-4">Sem link no momento.</p>}
+            {/* PIX Button - se tiver chave PIX configurada */}
+            {user?.pixKey && (
+              <PixButton pixKey={user?.pixKey} username={user.username} />
+            )}
           </div>
         </div>
 

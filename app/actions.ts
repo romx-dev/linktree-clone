@@ -114,3 +114,60 @@ export async function deleteLink(formData: FormData) {
 
   revalidatePath("/");
 }
+
+export async function updatePixKey(formData: FormData) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new Error("Not authenticated");
+  }
+
+  // Get user from database
+  const dbUser = await prisma.user.findUnique({
+    where: { clerkId: user.id },
+  });
+
+  if (!dbUser) {
+    throw new Error("User profile not found");
+  }
+
+  const pixKey = formData.get("pixKey") as string;
+
+  // Basic validation
+  if (!pixKey || pixKey.trim().length === 0) {
+    throw new Error("Chave PIX é obrigatória");
+  }
+
+  // Update PIX key
+  await prisma.user.update({
+    where: { id: dbUser.id },
+    data: { pixKey: pixKey.trim() },
+  });
+
+  revalidatePath("/");
+}
+
+export async function removePixKey() {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new Error("Not authenticated");
+  }
+
+  // Get user from database
+  const dbUser = await prisma.user.findUnique({
+    where: { clerkId: user.id },
+  });
+
+  if (!dbUser) {
+    throw new Error("User profile not found");
+  }
+
+  // Remove PIX key
+  await prisma.user.update({
+    where: { id: dbUser.id },
+    data: { pixKey: null },
+  });
+
+  revalidatePath("/");
+}
