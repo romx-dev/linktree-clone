@@ -30,6 +30,13 @@ export const PLAN_LIMITS = {
   },
 } as const;
 
+export type PlanLimits = (typeof PLAN_LIMITS)[Plan];
+
+export type LinkLimitCheck = {
+  allowed: boolean;
+  reason?: string;
+};
+
 export function getPlanLimits(plan: Plan) {
   return PLAN_LIMITS[plan];
 }
@@ -37,8 +44,8 @@ export function getPlanLimits(plan: Plan) {
 export function canCreateLink(
   plan: Plan,
   currentLinkCount: number,
-  planExpiresAt: Date | null
-): { allowed: boolean; reason?: string } {
+  planExpiresAt: Date | null,
+): LinkLimitCheck {
   // Check if plan is expired
   if (planExpiresAt && planExpiresAt < new Date() && plan !== "FREE") {
     return {
