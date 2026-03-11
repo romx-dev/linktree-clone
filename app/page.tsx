@@ -5,8 +5,6 @@ import {
   Trash2,
   Link as LinkIcon,
   Coffee,
-  Crown,
-  Zap,
   AlertCircle,
 } from "lucide-react";
 import prisma from "../lib/prisma";
@@ -102,9 +100,8 @@ export default async function Home() {
   const limitCheck = canCreateLink(
     dbUser.plan,
     dbUser.links.length,
-    dbUser.planExpiresAt
+    dbUser.planExpiresAt,
   );
-  const planExpired = dbUser.planExpiresAt && dbUser.planExpiresAt < new Date();
 
   return (
     <div className="flex min-h-screen">
@@ -123,47 +120,13 @@ export default async function Home() {
               Bem-vindo, @{dbUser.username}!
             </p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex items-center gap-2">
-              {dbUser.plan === "FREE" ?
-                <span className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
-                  Plano Grátis
-                </span>
-              : dbUser.plan === "PRO" ?
-                <span className="px-4 py-2 rounded-full bg-[#FFDD00] text-black font-semibold text-sm flex items-center gap-1">
-                  <Zap size={16} />
-                  Pro
-                </span>
-              : <span className="px-4 py-2 rounded-full bg-[#FFDD00] text-black font-semibold text-sm flex items-center gap-1">
-                  <Crown size={16} />
-                  Premium
-                </span>
-              }
-            </div>
-            {planExpired && (
-              <span className="text-xs text-red-600 font-semibold">
-                Plano Expirado
-              </span>
-            )}
-            {dbUser.plan !== "FREE" && !planExpired && (
-              <span className="text-xs text-[#6B7280]">
-                Válido até {dbUser.planExpiresAt?.toLocaleDateString("pt-BR")}
-              </span>
-            )}
-            <Link
-              href="/planos"
-              className="text-sm hover:underline font-semibold"
-            >
-              {dbUser.plan === "FREE" ? "Fazer Upgrade" : "Gerenciar Plano"}
-            </Link>
-          </div>
           {/* PIX Configuration */}
           <div className="card">
             <h2 className="text-2xl font-bold mb-6 text-black flex items-center gap-2">
               <Coffee size={24} />
               Me pague um café (PIX)
             </h2>
-            {dbUser.pixKey ?
+            {dbUser.pixKey ? (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between bg-white border border-[#E5E5E5] rounded-xl p-4">
                   <div className="flex flex-col gap-1">
@@ -189,7 +152,8 @@ export default async function Home() {
                   ✓ Seu botão de PIX aparecerá na sua página pública
                 </p>
               </div>
-            : <form action={updatePixKey} className="flex flex-col gap-4">
+            ) : (
+              <form action={updatePixKey} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-black">
                     Chave PIX (CPF, Email, Telefone ou Chave Aleatória)
@@ -213,7 +177,7 @@ export default async function Home() {
                   Salvar Chave PIX
                 </button>
               </form>
-            }
+            )}
           </div>
 
           {/* Add Link Form */}
@@ -272,9 +236,9 @@ export default async function Home() {
                 disabled={!limitCheck.allowed}
                 className="px-8 py-4 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {limitCheck.allowed ?
-                  "Adicionar Link"
-                : "Limite Atingido - Faça Upgrade"}
+                {limitCheck.allowed
+                  ? "Adicionar Link"
+                  : "Limite Atingido - Faça Upgrade"}
               </button>
             </form>
           </div>
@@ -282,12 +246,13 @@ export default async function Home() {
           {/* Links List */}
           <div className="card">
             <h2 className="text-2xl font-bold mb-6 text-black">Seus Links</h2>
-            {dbUser.links.length === 0 ?
+            {dbUser.links.length === 0 ? (
               <div className="flex flex-col items-center gap-3 text-[#6B7280]">
                 <LinkIcon size={24} className="opacity-50" />
                 <p>Ainda não há links. Adicione seu primeiro link acima!</p>
               </div>
-            : <div className="flex flex-col gap-4">
+            ) : (
+              <div className="flex flex-col gap-4">
                 {dbUser.links.map((link) => (
                   <div
                     key={link.id}
@@ -322,7 +287,7 @@ export default async function Home() {
                   </div>
                 ))}
               </div>
-            }
+            )}
           </div>
 
           {/* Profile Info */}
