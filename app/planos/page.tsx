@@ -4,6 +4,7 @@ import { Check, Crown, Zap } from "lucide-react";
 import prisma from "../../lib/prisma";
 import { upgradePlan } from "../actions";
 import { PLAN_PRICES } from "../../lib/plan-limits";
+import Link from "next/link";
 
 export default async function PlanosPage() {
   const user = await currentUser();
@@ -64,29 +65,30 @@ export default async function PlanosPage() {
                 </li>
               </ul>
 
-              {dbUser.plan === "FREE" ?
+              {dbUser.plan === "FREE" ? (
                 <button
                   disabled
                   className="px-6 py-3 rounded-full border border-[#E5E5E5] bg-gray-100 text-gray-400 font-semibold cursor-not-allowed"
                 >
                   Plano Atual
                 </button>
-              : <button
+              ) : (
+                <button
                   disabled
                   className="px-6 py-3 rounded-full border border-[#E5E5E5] bg-gray-100 text-gray-400 font-semibold cursor-not-allowed"
                 >
                   Downgrade
                 </button>
-              }
+              )}
             </div>
           </div>
 
           {/* Plano PRO */}
           <div
             className={`card border-2 ${
-              isPro && !isPremium ?
-                "border-[#FFDD00] bg-yellow-50"
-              : "border-[#E5E5E5]"
+              isPro && !isPremium
+                ? "border-[#FFDD00] bg-yellow-50"
+                : "border-[#E5E5E5]"
             } relative`}
           >
             {isPro && !isPremium && (
@@ -134,14 +136,15 @@ export default async function PlanosPage() {
                 </li>
               </ul>
 
-              {isPro && !isPremium ?
+              {isPro && !isPremium ? (
                 <button
                   disabled
                   className="px-6 py-3 rounded-full bg-[#FFDD00] text-black font-semibold opacity-50 cursor-not-allowed"
                 >
                   Plano Atual
                 </button>
-              : <form action={upgradePlan} className="flex flex-col gap-2">
+              ) : (
+                <form action={upgradePlan} className="flex flex-col gap-2">
                   <input type="hidden" name="plan" value="PRO" />
                   <input type="hidden" name="billing" value="monthly" />
                   <button
@@ -151,7 +154,7 @@ export default async function PlanosPage() {
                     {planExpired ? "Renovar" : "Fazer Upgrade"}
                   </button>
                 </form>
-              }
+              )}
             </div>
           </div>
 
@@ -206,14 +209,15 @@ export default async function PlanosPage() {
                 </li>
               </ul>
 
-              {isPremium ?
+              {isPremium ? (
                 <button
                   disabled
                   className="px-6 py-3 rounded-full bg-[#FFDD00] text-black font-semibold opacity-50 cursor-not-allowed"
                 >
                   Plano Atual
                 </button>
-              : <form action={upgradePlan} className="flex flex-col gap-2">
+              ) : (
+                <form action={upgradePlan} className="flex flex-col gap-2">
                   <input type="hidden" name="plan" value="PREMIUM" />
                   <input type="hidden" name="billing" value="monthly" />
                   <button
@@ -223,7 +227,7 @@ export default async function PlanosPage() {
                     {planExpired ? "Renovar" : "Fazer Upgrade"}
                   </button>
                 </form>
-              }
+              )}
             </div>
           </div>
         </div>
@@ -232,6 +236,12 @@ export default async function PlanosPage() {
           <p className="text-sm text-[#6B7280]">
             Todos os planos incluem suporte e atualizações gratuitas
           </p>
+          <Link
+            href="/"
+            className="inline-block px-6 py-3 rounded-full bg-[#FFDD00] text-black font-semibold hover:opacity-90 transition-opacity mt-6"
+          >
+            Voltar para o painel
+          </Link>
         </div>
       </main>
     </div>
