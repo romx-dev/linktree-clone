@@ -32,7 +32,7 @@ export default async function PublicProfile({ params }: PageProps) {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <main className="flex w-full max-w-2xl flex-col items-center justify-center px-6 py-20">
+      <main className="flex w-full max-w-2xl flex-col items-center justify-center px-6 pb-8">
         <div className="card w-full">
           <div className="flex flex-col items-center gap-8 text-center w-full">
             {/* Avatar */}
