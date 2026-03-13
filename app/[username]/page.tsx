@@ -36,7 +36,7 @@ export default async function PublicProfile({ params }: PageProps) {
         <div className="card w-full">
           <div className="flex flex-col items-center gap-8 text-center w-full">
             {/* Avatar */}
-            {clerkUser.imageUrl ?
+            {clerkUser.imageUrl ? (
               <Image
                 width="200"
                 height="200"
@@ -44,12 +44,13 @@ export default async function PublicProfile({ params }: PageProps) {
                 alt={user.username}
                 className="w-24 h-24 rounded-full object-cover"
               />
-            : <div className="w-24 h-24 rounded-full bg-[#FFDD00] flex items-center justify-center">
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-[#FFDD00] flex items-center justify-center">
                 <span className="text-4xl font-bold text-black">
                   {avatarLetter}
                 </span>
               </div>
-            }
+            )}
 
             {/* Username */}
             <h1 className="text-5xl font-bold leading-tight text-black">
@@ -60,7 +61,7 @@ export default async function PublicProfile({ params }: PageProps) {
             <CopyButton username={user.username} />
 
             {/* Links List */}
-            {user.links.length > 0 ?
+            {user.links.length > 0 ? (
               <div className="flex flex-col gap-4 w-full mt-4">
                 {user.links.map((link) => (
                   <a
@@ -74,7 +75,9 @@ export default async function PublicProfile({ params }: PageProps) {
                   </a>
                 ))}
               </div>
-            : <p className="text-[#6B7280] mt-4">Sem link no momento.</p>}
+            ) : (
+              <p className="text-[#6B7280] mt-4">Sem link no momento.</p>
+            )}
             {/* PIX Button - se tiver chave PIX configurada */}
             {user?.pixKey && (
               <PixButton pixKey={user?.pixKey} username={user.username} />
